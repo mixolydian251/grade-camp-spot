@@ -10,7 +10,7 @@
     "axios": "^0.18.0",
     "core-js": "^2.6.5",
     "date-fns": "^2.0.0-alpha.27",
-    "vee-validate": "^2.2.2",
+    "email-validator": "^2.0.4",
     "vue": "^2.6.6",
     "vuetify": "^1.5.5"
   },

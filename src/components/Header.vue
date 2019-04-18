@@ -1,11 +1,30 @@
 <template>
-    <div class="header">
+    <v-toolbar app flat clipped-right height="65">
+        <v-btn icon @click="toggleSidebar">
+            <v-icon>menu</v-icon>
+        </v-btn>
+        <v-spacer></v-spacer>
+        <template v-if="assignments.length">
+            <v-btn v-if="filters.selectedStudent !== 'All'"
+                   @click="filters.selectedStudent = 'All'"
+                   icon
+                   class="mx-2">
+                <v-icon>chevron_left</v-icon>
+            </v-btn>
+            <v-select
+                    class="mx-2 select"
+                    v-model="filters.selectedStudent"
+                    :items="generateStudentList"
+                    label="Student"
+                    color="teal accent-2"
+            >
+            </v-select>
+        </template>
         <v-select
-                class="select"
+                class="mx-2 select"
                 label="Course"
                 :items="courses"
-                dark
-                color="white" style="width: 200px !important;">
+                color="teal accent-2">
             <template slot="selection" slot-scope="data">
                 <v-list-tile-content>
                     {{data.item.course.name}}
@@ -18,38 +37,12 @@
             </template>
         </v-select>
 
-
-        <template v-if="assignments.length">
-            <v-btn v-if="filters.selectedStudent !== 'All'"
-                   @click="filters.selectedStudent = 'All'">
-                Back to All students
-            </v-btn>
-            <v-select
-                    class="select"
-                    v-model="filters.selectedStudent"
-                    :items="generateStudentList"
-                    label="Student"
-                    dark>
-            </v-select>
-            <v-checkbox
-                    class="input"
-                    v-model="filters.requiredOnly"
-                    label="Only show required assignments"
-                    dark
-                    color="blue">
-            </v-checkbox>
-            <v-checkbox
-                    class="input"
-                    v-model="filters.unfinishedOnly"
-                    label="Only show unfinished assignments"
-                    dark
-                    color="blue">
-            </v-checkbox>
-        </template>
-    </div>
+    </v-toolbar>
 </template>
 
 <script>
+  import EventBus from "../EventBus.js"
+
   export default {
     name: "app-header",
     props: [
@@ -63,30 +56,21 @@
       generateStudentList() {
         return this.assignments[0].students.map(({student}) => `${student.firstName} ${student.lastName}`)
       },
+    },
+    methods: {
+      toggleSidebar() {
+        EventBus.toggleSidebar()
+      }
     }
   }
 </script>
 
 <style scoped lang="scss">
-    .header {
-        height: 70px;
-        width: 100%;
-        display: flex;
-        justify-content: space-evenly;
-        align-items: center;
-        position: fixed;
-        top: 0;
-        left: 0;
-        background: #202020;
-        z-index: 100;
-    }
-
     .input {
         max-width: 200px;
     }
 
     .select {
         max-width: 200px;
-        padding-top: 20px;
     }
 </style>

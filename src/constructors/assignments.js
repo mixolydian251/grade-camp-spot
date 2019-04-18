@@ -6,15 +6,15 @@ class assignments {
     return this;
   }
 
-  requiredOnly(required) {
+  required(required) {
     if (required) {
       this.assignments = this.assignments.filter(({assignment}) => assignment.required);
     }
     return this
   }
 
-  unfinishedOnly(unfinishedOnly, selectedStudent) {
-    if (unfinishedOnly && selectedStudent !== "All") {
+  unfinished(unfinished, selectedStudent) {
+    if (unfinished && selectedStudent !== "All") {
       this.assignments = this.assignments.filter(({students}) => {
           const s = students.find(({student}) => {
             const {firstName, lastName} = student;

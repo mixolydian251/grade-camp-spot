@@ -1,25 +1,32 @@
 <template>
-    <div class="assignment-wrapper">
-        <div v-for="{assignment, students} in filteredAssignments" class="assignment-container">
-            <div class="assignment-header">
-                <h2>{{assignment.title}}</h2>
-                <p><i>{{formatDueDate(assignment.dueDate)}}</i></p>
-            </div>
-            <div class="assignment-list">
-                <template v-for="student in students">
-                    <div v-if="shouldRenderAssignment(student)"
-                         :style="renderAssignmentColor(student)"
-                         class="assignment"
-                         @click="selectStudent(student)">
-                        <p class="name">
+    <v-container>
+        <v-layout column>
+            <v-card flat v-for="{assignment, students} in filteredAssignments"
+                    class="pa-3 my-3"
+                    :key="assignment.id">
+                <v-layout row class="justify-space-between align-center pb-3">
+                    <h2 class="headline">{{assignment.title}}</h2>
+                    <span class="subheading font-italic ma-0">
+                        {{formatDueDate(assignment.dueDate)}}
+                </span>
+                </v-layout>
+                <div class="assignment-list">
+                    <template v-for="student in students">
+                        <v-card flat v-if="shouldRenderAssignment(student)"
+                                :style="renderAssignmentColor(student)"
+                                :key="student.student.id"
+                                class="assignment py-2 px-3"
+                                @click="selectStudent(student)">
+                        <span class="name body-1">
                             {{student.student.firstName}} {{student.student.lastName}}
-                        </p>
-                        <span class="status">{{renderStatus(student)}}</span>
-                    </div>
-                </template>
-            </div>
-        </div>
-    </div>
+                        </span>
+                            <span class="status subheading font-weight-bold">{{renderStatus(student)}}</span>
+                        </v-card>
+                    </template>
+                </div>
+            </v-card>
+        </v-layout>
+    </v-container>
 </template>
 
 <script>
@@ -34,11 +41,11 @@
         console.log("Updating Assingmnents")
 
         const assignments = new Assignments(this.assignments)
-        const {requiredOnly, unfinishedOnly, selectedStudent} = this.filters;
+        const {required, unfinished, selectedStudent} = this.filters;
         return assignments
           .selected(selectedStudent)
-          .requiredOnly(requiredOnly)
-          .unfinishedOnly(unfinishedOnly, selectedStudent)
+          .required(required)
+          .unfinished(unfinished, selectedStudent)
           .assignments
       },
     },
@@ -47,15 +54,15 @@
         this.filters.selectedStudent = `${student.firstName} ${student.lastName}`
       },
       shouldRenderAssignment({grade, submission}) {
-        if (!this.filters.unfinishedOnly) return true
+        if (!this.filters.unfinished) return true
         return !submission || !grade ||
           (grade && grade.grade === 'Incomplete')
       },
       renderAssignmentColor({grade, submission}) {
-        if (!submission) return {background: "#f24c37"};
-        else if (!grade) return {background: "#d9a700"};
-        else if (grade.grade === 'Incomplete') return {background: "#f24c37"};
-        return {background: "#55ad5d"}
+        if (!submission) return {background: "#F44336"};
+        else if (!grade) return {background: "#FFA000"};
+        else if (grade.grade === 'Incomplete') return {background: "#EF6C00"};
+        return {background: "#388E3C"}
       },
       renderStatus({grade, submission}) {
         if (!submission) return "Unsubmitted";
@@ -70,11 +77,6 @@
 </script>
 
 <style scoped lang="scss">
-    .assignment-wrapper {
-        margin-top: 80px;
-        width: 100%;
-        max-width: 1300px;
-    }
 
     .assignment-container {
         background: #202020;
@@ -112,7 +114,10 @@
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         grid-gap: 5px;
-        margin-bottom: 20px;
+
+        @media only screen and (min-width: 2100px) {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
 
         @media only screen and (max-width: 1165px) {
             grid-template-columns: 1fr 1fr;
@@ -125,33 +130,19 @@
 
     .assignment {
         justify-self: stretch;
-        padding: 5px 20px;
-        text-align: center;
         color: white;
-        border-radius: 2px;
-        min-width: 250px;
         display: flex;
         justify-content: space-evenly;
         align-items: center;
-        transition: 100ms ease;
-
-        p {
-            margin: 0;
-            font-weight: 500;
-        }
 
         .name {
             width: 60%;
-            font-weight: 600;
             text-align: left;
         }
 
         .status {
             width: 40%;
-            font-weight: 900;
-            font-size: 18px;
             text-align: left;
-
             @media only screen and (max-width: 800px) {
                 font-size: 16px;
             }
@@ -159,7 +150,7 @@
 
         &:hover {
             cursor: pointer;
-            filter: brightness(1.1);
+            filter: brightness(1.2);
         }
     }
 
