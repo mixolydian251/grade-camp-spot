@@ -1,9 +1,9 @@
 <template>
     <v-container>
         <v-layout column>
-            <v-card flat v-for="{assignment, students} in filteredAssignments"
-                    class="pa-3 my-3"
-                    :key="assignment.id">
+            <div flat v-for="{assignment, students} in filteredAssignments"
+                 class="assignment-card pa-3 my-3"
+                 :key="assignment.id">
                 <v-layout row class="justify-space-between align-center pb-3">
                     <h2 class="headline">{{assignment.title}}</h2>
                     <span class="subheading font-italic ma-0">
@@ -12,19 +12,19 @@
                 </v-layout>
                 <div class="assignment-list">
                     <template v-for="student in students">
-                        <v-card flat v-if="shouldRenderAssignment(student)"
-                                :style="renderAssignmentColor(student)"
-                                :key="student.student.id"
-                                class="assignment py-2 px-3"
-                                @click="selectStudent(student)">
+                        <div flat v-if="shouldRenderAssignment(student)"
+                             :style="renderAssignmentColor(student)"
+                             :key="student.student.id"
+                             class="assignment py-2 px-3"
+                             @click="selectStudent(student)">
                         <span class="name body-1">
                             {{student.student.firstName}} {{student.student.lastName}}
                         </span>
                             <span class="status subheading font-weight-bold">{{renderStatus(student)}}</span>
-                        </v-card>
+                        </div>
                     </template>
                 </div>
-            </v-card>
+            </div>
         </v-layout>
     </v-container>
 </template>
@@ -38,8 +38,6 @@
     props: ["assignments", "filters"],
     computed: {
       filteredAssignments() {
-        console.log("Updating Assingmnents")
-
         const assignments = new Assignments(this.assignments)
         const {required, unfinished, selectedStudent} = this.filters;
         return assignments
@@ -99,6 +97,11 @@
 
     }
 
+    .assignment-card {
+        background-color: #424242;
+        border-radius: 2px;
+    }
+
     .assignment-header {
         display: flex;
         justify-content: space-between;
@@ -134,6 +137,7 @@
         display: flex;
         justify-content: space-evenly;
         align-items: center;
+        border-radius: 2px;
 
         .name {
             width: 60%;
